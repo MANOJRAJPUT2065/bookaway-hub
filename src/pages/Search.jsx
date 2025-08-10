@@ -1,8 +1,10 @@
 import { Helmet } from "react-helmet-async";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/auth/AuthProvider";
+import { addBookingForUser } from "@/backend/bookings";
 
 const listings = [
   {
@@ -38,8 +40,12 @@ function useQuery() {
 
 const Search = () => {
   const query = useQuery();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const destination = query.get("destination")?.toLowerCase() ?? "";
   const guests = query.get("guests") ?? "1";
+  const from = query.get("from") ?? "";
+  const to = query.get("to") ?? "";
 
   const filtered = useMemo(() => {
     if (!destination) return listings;
@@ -47,6 +53,24 @@ const Search = () => {
       (l) => l.title.toLowerCase().includes(destination) || l.location.toLowerCase().includes(destination)
     );
   }, [destination]);
+
+  const bookNow = (item) => {
+    if (!user) {
+      toast({ title: "Sign in required", description: "Please log in to book." });
+      navigate("/login");
+      return;
+    }
+    addBookingForUser(user.id, {
+      title: item.title,
+      location: item.location,
+      from,
+      to,
+      guests,
+      createdAt: new Date().toISOString(),
+    });
+    toast({ title: "Booked", description: `${item.title} reserved.` });
+    navigate("/bookings");
+  };
 
   return (
     <main className="container mx-auto px-6 py-10">
@@ -72,7 +96,7 @@ const Search = () => {
                 <Button
                   variant="hero"
                   className="w-full"
-                  onClick={() => toast({ title: "Booking requested", description: `We will finalize your booking at ${item.title}.` })}
+                  onClick={() => bookNow(item)}
                 >
                   Book now
                 </Button>
