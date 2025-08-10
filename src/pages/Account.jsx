@@ -1,23 +1,39 @@
 import { Helmet } from "react-helmet-async";
-import { useAuth } from "@/auth/AuthProvider";
-import { Button } from "@/components/ui/button";
 
 const Account = () => {
-  const { user, signOut } = useAuth();
+  // Dummy user data for demonstration
+  const user = { email: "user@example.com" };
+
+  // Simple signOut simulation
+  const signOut = () => {
+    alert("Signed out");
+    // You can add navigation or state reset here if needed
+  };
 
   return (
-    <main className="container mx-auto px-6 py-10 max-w-2xl">
+    <main style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
       <Helmet>
         <title>Account — BookAway Hub</title>
         <meta name="description" content="Manage your BookAway Hub account" />
         <link rel="canonical" href="/account" />
       </Helmet>
-      <h1 className="text-2xl font-semibold mb-4">Account</h1>
-      <div className="rounded-lg border border-border p-6 bg-card">
-        <p className="text-sm text-muted-foreground mb-2">Email</p>
-        <p className="font-medium">{user?.email}</p>
-        <div className="mt-6">
-          <Button variant="outline" onClick={signOut}>Sign out</Button>
+      <h1>Account</h1>
+      <div style={{ border: "1px solid #ccc", borderRadius: 8, padding: 20, backgroundColor: "#f9f9f9" }}>
+        <p style={{ color: "#666", marginBottom: 4 }}>Email</p>
+        <p style={{ fontWeight: "bold" }}>{user.email}</p>
+        <div style={{ marginTop: 20 }}>
+          <button
+            onClick={signOut}
+            style={{
+              padding: "10px 20px",
+              border: "1px solid #333",
+              backgroundColor: "transparent",
+              cursor: "pointer",
+              borderRadius: 4,
+            }}
+          >
+            Sign out
+          </button>
         </div>
       </div>
     </main>

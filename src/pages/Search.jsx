@@ -1,10 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import { useAuth } from "@/auth/AuthProvider";
-import { addBookingForUser } from "@/backend/bookings";
 
 const listings = [
   {
@@ -38,10 +34,16 @@ function useQuery() {
   return useMemo(() => new URLSearchParams(search), [search]);
 }
 
+// Dummy bookings storage (replace with your backend logic)
+const bookingsStorage = [];
+
 const Search = () => {
   const query = useQuery();
-  const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Simulated user (null means not logged in)
+  const user = { id: "dummy-user-id" }; // Replace with null to simulate no login
+
   const destination = query.get("destination")?.toLowerCase() ?? "";
   const guests = query.get("guests") ?? "1";
   const from = query.get("from") ?? "";
@@ -50,17 +52,21 @@ const Search = () => {
   const filtered = useMemo(() => {
     if (!destination) return listings;
     return listings.filter(
-      (l) => l.title.toLowerCase().includes(destination) || l.location.toLowerCase().includes(destination)
+      (l) =>
+        l.title.toLowerCase().includes(destination) ||
+        l.location.toLowerCase().includes(destination)
     );
   }, [destination]);
 
   const bookNow = (item) => {
     if (!user) {
-      toast({ title: "Sign in required", description: "Please log in to book." });
+      alert("Please log in to book.");
       navigate("/login");
       return;
     }
-    addBookingForUser(user.id, {
+    // Simulate booking addition
+    bookingsStorage.push({
+      userId: user.id,
       title: item.title,
       location: item.location,
       from,
@@ -68,39 +74,84 @@ const Search = () => {
       guests,
       createdAt: new Date().toISOString(),
     });
-    toast({ title: "Booked", description: `${item.title} reserved.` });
+    alert(`Booked ${item.title} successfully.`);
     navigate("/bookings");
   };
 
   return (
-    <main className="container mx-auto px-6 py-10">
+    <main style={{ maxWidth: 960, margin: "auto", padding: "1rem" }}>
       <Helmet>
         <title>Search stays — BookAway Hub</title>
-        <meta name="description" content="Browse available hotels, resorts, and stays based on your search." />
+        <meta
+          name="description"
+          content="Browse available hotels, resorts, and stays based on your search."
+        />
         <link rel="canonical" href="/search" />
       </Helmet>
-      <h1 className="text-2xl md:text-3xl font-semibold mb-6">Search results</h1>
-      <p className="text-muted-foreground mb-6">{filtered.length} place(s) for {guests} {guests === "1" ? "guest" : "guests"}</p>
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <h1 style={{ fontSize: "2rem", fontWeight: "bold", marginBottom: "1rem" }}>
+        Search results
+      </h1>
+      <p style={{ color: "#666", marginBottom: "1.5rem" }}>
+        {filtered.length} place(s) for {guests} {guests === "1" ? "guest" : "guests"}
+      </p>
+      <section
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
+          gap: "1rem",
+        }}
+      >
         {filtered.map((item) => (
-          <article key={item.id} className="rounded-xl overflow-hidden border border-border bg-card shadow-sm hover:shadow-elegant transition-all">
-            <img src={item.image} alt={`${item.title} in ${item.location}`} className="h-48 w-full object-cover" loading="lazy" />
-            <div className="p-5 space-y-2">
-              <h2 className="text-lg font-semibold">{item.title}</h2>
-              <p className="text-sm text-muted-foreground">{item.location}</p>
-              <div className="flex items-center justify-between">
-                <span className="text-sm">${""}{item.price}/night</span>
-                <span className="text-sm" aria-label={`Rating ${item.rating} out of 5`}>⭐ {item.rating}</span>
+          <article
+            key={item.id}
+            style={{
+              borderRadius: 12,
+              border: "1px solid #ddd",
+              backgroundColor: "#fff",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <img
+              src={item.image}
+              alt={`${item.title} in ${item.location}`}
+              style={{ height: 180, width: "100%", objectFit: "cover" }}
+              loading="lazy"
+            />
+            <div style={{ padding: 16, flexGrow: 1, display: "flex", flexDirection: "column" }}>
+              <h2 style={{ fontSize: "1.25rem", fontWeight: "600", marginBottom: 6 }}>
+                {item.title}
+              </h2>
+              <p style={{ fontSize: "0.9rem", color: "#666", marginBottom: 8 }}>{item.location}</p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "0.9rem",
+                  marginBottom: 12,
+                }}
+              >
+                <span>${item.price}/night</span>
+                <span aria-label={`Rating ${item.rating} out of 5`}>⭐ {item.rating}</span>
               </div>
-              <div className="pt-2">
-                <Button
-                  variant="hero"
-                  className="w-full"
-                  onClick={() => bookNow(item)}
-                >
-                  Book now
-                </Button>
-              </div>
+              <button
+                onClick={() => bookNow(item)}
+                style={{
+                  marginTop: "auto",
+                  backgroundColor: "#2563eb",
+                  color: "#fff",
+                  padding: "10px 16px",
+                  border: "none",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  fontSize: "1rem",
+                }}
+              >
+                Book now
+              </button>
             </div>
           </article>
         ))}

@@ -1,41 +1,40 @@
-import { useMemo } from "react";
-import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { DateRange } from "react-day-picker";
+import { useState } from "react";
 
-interface Props {
-  value?: DateRange;
-  onChange?: (value: DateRange | undefined) => void;
-}
+const SimpleDateRangePicker = ({ value, onChange }) => {
+  const [from, setFrom] = useState(value?.from || "");
+  const [to, setTo] = useState(value?.to || "");
 
-const DateRangePicker = ({ value, onChange }: Props) => {
-  const label = useMemo(() => {
-    if (value?.from && value?.to) return `${format(value.from, "MMM d")} - ${format(value.to, "MMM d, yyyy")}`;
-    if (value?.from) return `${format(value.from, "MMM d, yyyy")} →`;
-    return "Select dates";
-  }, [value]);
+  const handleFromChange = (e) => {
+    const newFrom = e.target.value;
+    setFrom(newFrom);
+    onChange({ from: newFrom, to });
+  };
+
+  const handleToChange = (e) => {
+    const newTo = e.target.value;
+    setTo(newTo);
+    onChange({ from, to: newTo });
+  };
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" className="w-full justify-start text-left font-normal">
-          {label}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          initialFocus
-          mode="range"
-          defaultMonth={value?.from}
-          selected={value}
-          onSelect={onChange}
-          numberOfMonths={2}
-        />
-      </PopoverContent>
-    </Popover>
+    <div className="flex gap-2">
+      <input
+        type="date"
+        value={from}
+        onChange={handleFromChange}
+        aria-label="Start date"
+        className="border p-1 rounded"
+      />
+      <span>to</span>
+      <input
+        type="date"
+        value={to}
+        onChange={handleToChange}
+        aria-label="End date"
+        className="border p-1 rounded"
+      />
+    </div>
   );
 };
 
-export default DateRangePicker;
+export default SimpleDateRangePicker;

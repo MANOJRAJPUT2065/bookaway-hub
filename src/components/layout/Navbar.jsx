@@ -1,9 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/auth/AuthProvider";
 
 const Navbar = () => {
-  const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -12,18 +9,14 @@ const Navbar = () => {
         <Link to="/" className="font-semibold tracking-tight">BookAway Hub</Link>
         <div className="flex items-center gap-3">
           <Link to="/search" className="text-sm text-muted-foreground hover:text-foreground">Search</Link>
-          {user ? (
-            <>
-              <Link to="/bookings" className="text-sm text-muted-foreground hover:text-foreground">My Bookings</Link>
-              <Link to="/account" className="text-sm text-muted-foreground hover:text-foreground">Account</Link>
-              <Button variant="outline" size="sm" onClick={async () => { await signOut(); navigate("/"); }}>Sign out</Button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground">Log in</Link>
-              <Button asChild size="sm" variant="hero"><Link to="/signup">Sign up</Link></Button>
-            </>
-          )}
+          {/* Show login and signup links always */}
+          <Link to="/login" className="text-sm text-muted-foreground hover:text-foreground">Log in</Link>
+          <Link
+            to="/signup"
+            className="text-sm text-muted-foreground hover:text-foreground font-semibold px-3 py-1 rounded bg-primary text-white"
+          >
+            Sign up
+          </Link>
         </div>
       </div>
     </nav>

@@ -1,6 +1,6 @@
-import beach from "@/assets/destination-beach.jpg";
-import mountain from "@/assets/destination-mountain.jpg";
-import city from "@/assets/destination-city.jpg";
+import beach from "../../assets/destination-beach.jpg"
+import mountain from "../../assets/destination-mountain.jpg";
+import city from "../../assets/destination-city.jpg";
 
 const items = [
   {

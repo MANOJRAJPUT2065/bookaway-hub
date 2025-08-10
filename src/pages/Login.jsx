@@ -1,10 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
-import { toast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -12,39 +8,59 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const onSubmit = async (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      toast({ title: "Login failed", description: error.message });
-      return;
-    }
-    toast({ title: "Welcome back", description: "Logged in successfully" });
-    navigate("/account");
+
+    setTimeout(() => {
+      setLoading(false);
+
+      if (!email.includes("@") || password.length < 6) {
+        alert("Login failed: Invalid email or password too short");
+        return;
+      }
+
+      alert("Welcome back! Logged in successfully.");
+      navigate("/account");
+    }, 1500);
   };
 
   return (
-    <main className="container mx-auto px-6 py-10 max-w-md">
+    <main style={{ maxWidth: 400, margin: "auto", padding: 20 }}>
       <Helmet>
         <title>Log in — BookAway Hub</title>
         <meta name="description" content="Access your BookAway Hub account" />
         <link rel="canonical" href="/login" />
       </Helmet>
-      <h1 className="text-2xl font-semibold mb-6">Log in</h1>
-      <form onSubmit={onSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm mb-1 text-muted-foreground">Email</label>
-          <Input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required />
-        </div>
-        <div>
-          <label className="block text-sm mb-1 text-muted-foreground">Password</label>
-          <Input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required />
-        </div>
-        <Button type="submit" variant="hero" className="w-full" disabled={loading}>{loading?"Logging in...":"Log in"}</Button>
+      <h1>Log in</h1>
+      <form onSubmit={onSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <label>
+          Email
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{ width: "100%", padding: 8, marginTop: 4 }}
+          />
+        </label>
+        <label>
+          Password
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ width: "100%", padding: 8, marginTop: 4 }}
+          />
+        </label>
+        <button type="submit" disabled={loading} style={{ padding: 10 }}>
+          {loading ? "Logging in..." : "Log in"}
+        </button>
       </form>
-      <p className="text-sm text-muted-foreground mt-4">No account? <Link to="/signup" className="underline text-primary">Sign up</Link></p>
+      <p style={{ marginTop: 16 }}>
+        No account? <Link to="/signup">Sign up</Link>
+      </p>
     </main>
   );
 };
