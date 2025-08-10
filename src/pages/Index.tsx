@@ -1,13 +1,31 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Helmet } from "react-helmet-async";
+import Hero from "@/components/booking/Hero";
+import FeaturedDestinations from "@/components/booking/FeaturedDestinations";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <main>
+      <Helmet>
+        <title>BookAway Hub — Hotel & Travel Bookings</title>
+        <meta name="description" content="Book hotels, resorts, and stays worldwide with BookAway Hub. Compare deals and book in minutes." />
+        <link rel="canonical" href="/" />
+        <meta property="og:title" content="BookAway Hub — Hotel & Travel Bookings" />
+        <meta property="og:description" content="Book hotels, resorts, and stays worldwide with BookAway Hub." />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "BookAway Hub",
+          url: "/",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "/search?destination={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        })}</script>
+      </Helmet>
+      <Hero />
+      <FeaturedDestinations />
+    </main>
   );
 };
 
