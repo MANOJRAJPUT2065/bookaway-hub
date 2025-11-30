@@ -157,5 +157,98 @@ Delete node_modules and reinstall dependencies if needed.
 
 Restart development server after config changes.
 
+---
+
+## Deployment
+
+This application can be deployed on various platforms. Below are instructions for popular hosting services.
+
+### Deploy on Vercel (Recommended)
+
+Vercel provides seamless deployment for full-stack applications.
+
+1. **Fork this repository** to your GitHub account
+
+2. **Sign up for Vercel** at [vercel.com](https://vercel.com)
+
+3. **Import your repository** in Vercel dashboard
+
+4. **Configure environment variables** in Vercel project settings:
+   - `JWT_SECRET` - Your JWT secret key (generate a secure random string)
+   - `NODE_ENV` - Set to `production`
+
+5. **Deploy** - Vercel will automatically build and deploy your app
+
+6. **Access your app** at the provided Vercel URL
+
+### Deploy Backend on Railway
+
+For backend-only deployment:
+
+1. Sign up at [railway.app](https://railway.app)
+2. Create a new project from GitHub repository
+3. Select the `backend` folder as root directory
+4. Add environment variables: `JWT_SECRET`, `PORT`
+5. Deploy and get your backend API URL
+
+### Deploy Frontend on Netlify
+
+For frontend-only deployment:
+
+1. Sign up at [netlify.com](https://netlify.com)
+2. Connect your GitHub repository
+3. Set build command: `npm run build`
+4. Set publish directory: `dist`
+5. Add environment variable for backend API URL
+6. Deploy
+
+### Environment Variables
+
+Create a `.env` file in the `backend` directory (see `.env.example`):
+
+```bash
+JWT_SECRET=your_secure_jwt_secret_here
+PORT=3001
+CORS_ORIGIN=https://your-frontend-url.com
+```
+
+**Important Security Notes:**
+- Never commit `.env` files to Git
+- Use strong, random JWT secrets in production
+- Update CORS_ORIGIN to your actual frontend URL
+
+### Build Commands
+
+**Frontend:**
+```bash
+npm install
+npm run build
+```
+
+**Backend:**
+```bash
+cd backend
+npm install
+node index.js
+```
+
+### Post-Deployment
+
+After deployment:
+1. Test all authentication flows
+2. Test booking creation and retrieval
+3. Verify API endpoints are accessible
+4. Check CORS settings if frontend can't reach backend
+
+---
+
+## Contribution
+
+Feel free to fork and submit PRs. Report issues on GitHub.
+
+## License
+
+MIT License - feel free to use this project for learning or production.
+
 Contribution
 Feel free to fork and submit PRs. Report issues on GitHub.
