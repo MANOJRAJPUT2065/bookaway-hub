@@ -35,7 +35,6 @@ function useQuery() {
 }
 
 // Dummy bookings storage (replace with your backend logic)
-const bookingsStorage = [];
 
 const Search = () => {
   const query = useQuery();
@@ -58,25 +57,45 @@ const Search = () => {
     );
   }, [destination]);
 
-  const bookNow = (item) => {
+  const bookNow =  async(item) => {
     if (!user) {
       alert("Please log in to book.");
       navigate("/login");
       return;
     }
-    // Simulate booking addition
-    bookingsStorage.push({
-      userId: user.id,
-      title: item.title,
-      location: item.location,
-      from,
-      to,
-      guests,
-      createdAt: new Date().toISOString(),
-    });
-    alert(`Booked ${item.title} successfully.`);
-    navigate("/bookings");
-  };
+    // Send booking to backend API
+    try {
+      const token = localStorage.getItem("token"); // Assuming token is stored after login
+      
+      const response = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          title: item.title,
+          location: item.location,
+          from,
+          to,
+          guests,
+          price: item.price
+        })
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        alert(`Failed to book: ${error.error || "Unknown error"}`);
+        return;
+      }
+      
+      const data = await response.json();
+      alert(`Booked ${item.title} successfully.`);
+      navigate("/bookings");
+    } catch (error) {
+      console.error("Booking error:", error);
+      alert("Failed to create booking. Please try again.");
+    }  };
 
   return (
     <main style={{ maxWidth: 960, margin: "auto", padding: "1rem" }}>
